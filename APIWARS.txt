@@ -1,0 +1,123 @@
+A feladatod egy olyan webalkalmazás létrehozása, amely a Csillagok háborúja univerzum adatait jeleníti
+meg egy oldalon, és AJAX kérésekkel tölti be a részletes információkat modális ablakban.
+
+Feladatok
+
+Főoldal
+
+Hozz létre egy weboldalt, amely egy táblázatot mutat a Csillagok háborúja univerzum bolygóiról.
+A weboldal nyitóoldala (/) 10 bolygó adatait mutatja.
+Az adatok egy táblázatban jelennek meg, amely teljes mértékben reszponzív (kisebb nézetben
+listává rendeződik).
+A táblázat oszlopai: név, átmérő (km-ben megjelenítve), éghajlat, terep, felszíni víz (százalékban
+megjelenítve), népesség (formázva, pl. 1,000,000 fő).
+Az oszlopcímek megfelelő táblázat fejlécek.
+A táblázat felett van egy "Következő" gomb, amelyre kattintva a következő 10 bolygó jelenik meg,
+ha van.
+A táblázat felett van egy "Előző" gomb, amelyre kattintva az előző 10 bolygó jelenik meg, ha van.
+
+A következő vagy előző gombok dupla kattintása csak egyszer mutatja a következő vagy előző 10
+bolygót.
+Az ismeretlen felszíni víz százalék és népesség értékek egyértelműen és utótag nélkül jelennek
+meg (például a Coruscant és Hoth bolygók esetében).
+Az oldal adatai AJAX fetch kérésekkel töltődnek be a The Star Wars API-ból (SWAPI).
+A bolygó lista betöltési jelzőt jelenít meg, amíg a tartalom betöltődik.
+A bolygó lista navigáció le van tiltva, amíg a kért adatok betöltődnek.
+Lakosok modális ablak
+
+Jeleníts meg egy gombot minden sorban, ha a bolygónak vannak lakosai. Ezek a gombok megnyitnak
+egy modális ablakot és AJAX kéréssel töltik fel annak adatait.
+A bolygó táblázatban minden sorban van egy gomb egy új oszlopban, amely a lakosok számát
+mutatja, ha a bolygónak vannak lakosai, egyébként a "Nincs ismert lakos" szöveg jelenik meg.
+A bolygó táblázatban a " lakos" gombra kattintva megjelenik egy modális ablak, amely a bolygó
+összes lakosát mutatja (minden alkalommal).
+A modális ablak adatai AJAX fetch kéréssel töltődnek be a SWAPI-ból az oldal frissítése nélkül.
+A modális ablak tartalmaz egy HTML <table> elemet az adatokkal.
+A táblázat oszlopai: név, magasság (méterben megjelenítve), tömeg (kg-ban megjelenítve),
+bőrszín, hajszín, szemszín, születési év, nem (ikon ábrázolással).
+A modális ablak jobb felső sarkában van egy X ikon, a jobb alsó sarkában pedig egy Bezárás gomb;
+ezekre kattintva bezáródik a modális ablak.
+A lakosok modális ablak betöltési jelzőt jelenít meg, amíg a tartalom betöltődik.
+A lakosok modális ablak nem mutatja a táblázat fejlécét, amíg a tartalom betöltődik.
+Általános követelmények
+
+Az egész feladathoz használd a The Star Wars API-t az adatok lekéréséhez.
+Minden adat AJAX fetch kérésekkel töltődik be.
+Az oldal nem mutat hibát a használat során.
+Használj modern JavaScript szintaxist (async/await vagy Promise-ok).
+
+Tippek
+
+Használj Bootstrap-et, ha nem akarsz túl sok időt tölteni a dizájnnal.
+A SWAPI paginációt használja. A válaszban van egy next és previous attribútum, amelyek
+segítségével navigálhatsz.
+Használj szegélyezett táblázatot a szükséges információk megjelenítéséhez.
+A SWAPI válaszai JSON formátumban érkeznek.
+
+API információk
+
+Bolygók lekérése
+Első oldal: https://swapi.dev/api/planets/
+Következő/előző oldal: használd a válaszban kapott next és previous URL-eket
+
+Bolygó adatai
+A bolygó objektum tartalmazza:
+name : bolygó neve
+diameter : átmérő (km)
+climate : éghajlat
+terrain : terep
+surface_water : felszíni víz (szám vagy "unknown")
+population : népesség (szám vagy "unknown")
+residents : lakosok URL-jeinek tömbje
+
+Lakos adatai
+
+A lakos objektum tartalmazza:
+name : név
+height : magasság (cm)
+mass : tömeg (kg)
+skin_color : bőrszín
+hair_color : hajszín
+eye_color : szemszín
+birth_year : születési év
+gender : nem
+
+Példa AJAX fetch használata
+
+// Egyszerű fetch példa
+fetch('https://swapi.dev/api/planets/')
+.then(response => response.json())
+.then(data => {
+
+// Feldolgozás
+})
+.catch(error => {
+// Hiba kezelés
+});
+// Async/await példa
+async function loadPlanets() {
+try {
+const response = await fetch('https://swapi.dev/api/planets/');
+const data = await response.json();
+// Feldolgozás
+} catch (error) {
+// Hiba kezelés
+}
+}
+
+Röviden:
+Oldal
+-10 bolygó
+-táblázat oszlopai: név, átmérő (km-ben megjelenítve), éghajlat, terep, felszíni víz (százalékban
+megjelenítve), népesség (formázva, pl. 1,000,000 fő).
+- "Következő", "Előző" gomb
+-A bolygó lista betöltési jelzőt jelenít meg, amíg a tartalom betöltődik.
+-A bolygó lista navigáció le van tiltva, amíg a kért adatok betöltődnek.
+Lakosok
+- gomb vagy "Nincs ismert lakos"
+- táblázat oszlopai: név, magasság (méterben megjelenítve), tömeg (kg-ban megjelenítve),
+bőrszín, hajszín, szemszín, születési év, nem (ikon ábrázolással).
+- jobb felső sarkában van egy X ikon, a jobb alsó sarkában pedig egy Bezárás gomb
+-ablak betöltési jelzőt jelenít meg, amíg a tartalom betöltődik.
+- lakosok modális ablak nem mutatja a táblázat fejlécét, amíg a tartalom betöltődik.
+
