@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>API Wars – Star Wars bolygók</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    .spinner-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+<div class="container my-4">
+  <h1 class="text-center mb-4">🌌 API Wars – Star Wars bolygók</h1>
+
+  
+  <div class="d-flex justify-content-between mb-3">
+    <button id="prevBtn" class="btn btn-secondary" disabled>Előző</button>
+    <button id="nextBtn" class="btn btn-secondary" disabled>Következő</button>
+  </div>
+
+
+  <div id="loading" class="spinner-container">
+    <div class="spinner-border text-primary"></div>
+  </div>
+
+  
+  <div class="table-responsive d-none" id="tableWrapper">
+    <table class="table table-bordered table-striped align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Név</th>
+          <th>Átmérő (km)</th>
+          <th>Éghajlat</th>
+          <th>Terep</th>
+          <th>Felszíni víz</th>
+          <th>Népesség</th>
+          <th>Lakosok</th>
+        </tr>
+      </thead>
+      <tbody id="planetTable"></tbody>
+    </table>
+  </div>
+</div>
+
+
+<div class="modal fade" id="residentModal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Lakosok</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <div id="residentLoading" class="spinner-container">
+          <div class="spinner-border"></div>
+        </div>
+
+        <div id="residentTableWrapper" class="d-none">
+          <table class="table table-bordered">
+            <thead class="table-secondary">
+              <tr>
+                <th>Név</th>
+                <th>Magasság (m)</th>
+                <th>Tömeg (kg)</th>
+                <th>Bőrszín</th>
+                <th>Hajszín</th>
+                <th>Szemszín</th>
+                <th>Születési év</th>
+                <th>Nem</th>
+              </tr>
+            </thead>
+            <tbody id="residentTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Bezárás</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  let currentUrl = 'https://swapi.dev/api/planets/';
+  let isLoading = false;
+  let nextUrl = null;
+  let prevUrl = null;
+
+  const tableBody = document.getElementById('planetTable');
+  const loading = document.getElementById('loading');
+  const tableWrapper = document.getElementById('tableWrapper');
+  const nextBtn = document.getElementById('nextBtn');
+  const prevBtn = document.getElementById('prevBtn');
+
+  async function loadPlanets(url) {
+    if (isLoading) return;
+    isLoading = true;
+
+    loading.classList.remove('d-none');
+    tableWrapper.classList.add('d-none');
+    nextBtn.disabled = true;
+    prevBtn.disabled = true;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      nextUrl = data.next;
+      prevUrl = data.previous;
+
+      renderPlanets(data.results);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      isLoading = false;
+      loading.classList.add('d-none');
+      tableWrapper.classList.remove('d-none');
+
+      nextBtn.disabled = !nextUrl;
+      prevBtn.disabled = !prevUrl;
+    }
+  }
+
+  function renderPlanets(planets) {
+    tableBody.innerHTML = '';
+
+    planets.forEach(planet => {
+      const tr = document.createElement('tr');
+
+      const water = planet.surface_water === 'unknown'
+        ? 'unknown'
+        : planet.surface_water + '%';
+
+      const population = planet.population === 'unknown'
+        ? 'unknown'
+        : Number(planet.population).toLocaleString() + ' fő';
+
+      let residentCell = 'Nincs ismert lakos';
+
+      if (planet.residents.length > 0) {
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-primary btn-sm';
+        btn.textContent = planet.residents.length + ' lakos';
+        btn.onclick = () => openResidents(planet.residents);
+        residentCell = btn;
+      }
+
+      tr.innerHTML = `
+        <td>${planet.name}</td>
+        <td>${planet.diameter}</td>
+        <td>${planet.climate}</td>
+        <td>${planet.terrain}</td>
+        <td>${water}</td>
+        <td>${population}</td>
+        <td></td>
+      `;
+
+      if (residentCell instanceof HTMLElement) {
+        tr.children[6].appendChild(residentCell);
+      } else {
+        tr.children[6].textContent = residentCell;
+      }
+
+      tableBody.appendChild(tr);
+    });
+  }
+
+  async function openResidents(urls) {
+    const modal = new bootstrap.Modal(document.getElementById('residentModal'));
+    modal.show();
+
+    const loading = document.getElementById('residentLoading');
+    const wrapper = document.getElementById('residentTableWrapper');
+    const table = document.getElementById('residentTable');
+
+    loading.classList.remove('d-none');
+    wrapper.classList.add('d-none');
+    table.innerHTML = '';
+
+    const residents = await Promise.all(
+      urls.map(url => fetch(url).then(res => res.json()))
+    );
+
+    residents.forEach(r => {
+      const genderIcon =
+        r.gender === 'male' ? '♂' :
+        r.gender === 'female' ? '♀' : '⚧';
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${r.name}</td>
+        <td>${r.height / 100}</td>
+        <td>${r.mass}</td>
+        <td>${r.skin_color}</td>
+        <td>${r.hair_color}</td>
+        <td>${r.eye_color}</td>
+        <td>${r.birth_year}</td>
+        <td>${genderIcon}</td>
+      `;
+      table.appendChild(tr);
+    });
+
+    loading.classList.add('d-none');
+    wrapper.classList.remove('d-none');
+  }
+
+  nextBtn.addEventListener('click', () => loadPlanets(nextUrl));
+  prevBtn.addEventListener('click', () => loadPlanets(prevUrl));
+
+  loadPlanets(currentUrl);
+</script>
+
+</body>
+</html>
