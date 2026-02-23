@@ -18,7 +18,6 @@
   </style>
 </head>
 <body class="bg-light">
-
 <div class="container my-4">
   <h1 class="text-center mb-4">🌌 API Wars – Star Wars bolygók</h1>
 
@@ -39,7 +38,7 @@
       <thead class="table-dark">
         <tr>
           <th>Név</th>
-          <th>Átmérő (km)</th>
+          <th>Átmérő</th>
           <th>Éghajlat</th>
           <th>Terep</th>
           <th>Felszíni víz</th>
@@ -143,12 +142,25 @@
       const tr = document.createElement('tr');
 
       const water = planet.surface_water === 'unknown'
-        ? 'unknown'
+        ? 'ismeretlen'
         : planet.surface_water + '%';
 
       const population = planet.population === 'unknown'
-        ? 'unknown'
+        ? 'ismeretlen'
         : Number(planet.population).toLocaleString() + ' fő';
+
+      
+      const diameter = planet.population === 'unknown'
+        ? 'ismeretlen'
+        : Number(planet.population).toLocaleString();
+
+        const climate = planet.surface_water === 'unknown'
+        ? 'ismeretlen'
+        : planet.surface_water;
+
+        const terrain = planet.surface_water === 'unknown'
+        ? 'ismeretlen'
+        : planet.surface_water;
 
       let residentCell = 'Nincs ismert lakos';
 
@@ -162,9 +174,9 @@
 
       tr.innerHTML = `
         <td>${planet.name}</td>
-        <td>${planet.diameter}</td>
-        <td>${planet.climate}</td>
-        <td>${planet.terrain}</td>
+        <td>${diameter}</td>
+        <td>${climate}</td>
+        <td>${terrain}</td>
         <td>${water}</td>
         <td>${population}</td>
         <td></td>
