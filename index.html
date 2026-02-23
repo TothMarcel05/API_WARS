@@ -70,8 +70,8 @@
             <thead class="table-secondary">
               <tr>
                 <th>Név</th>
-                <th>Magasság (m)</th>
-                <th>Tömeg (kg)</th>
+                <th>Magasság</th>
+                <th>Tömeg</th>
                 <th>Bőrszín</th>
                 <th>Hajszín</th>
                 <th>Szemszín</th>
@@ -216,8 +216,8 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${r.name}</td>
-        <td>${r.height / 100}</td>
-        <td>${r.mass}</td>
+        <td>${r.height} m</td>
+        <td>${r.mass} kg</td>
         <td>${r.skin_color}</td>
         <td>${r.hair_color}</td>
         <td>${r.eye_color}</td>
