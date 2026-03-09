@@ -144,15 +144,15 @@
       
       const diameter = planet.diameter === 'unknown'
         ? 'ismeretlen'
-        : Number(planet.diameter).toLocaleString();
+        : Number(planet.diameter).toLocaleString() + ' km';
 
         const climate = planet.climate === 'unknown'
         ? 'ismeretlen'
         : planet.climate;
 
-        const terrain = planet.surface_water === 'unknown'
+        const terrain = planet.terrain === 'unknown'
         ? 'ismeretlen'
-        : planet.surface_water;
+        : planet.terrain;
 
       let residentCell = 'Nincs ismert lakos';
 
